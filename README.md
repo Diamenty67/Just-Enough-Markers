@@ -50,18 +50,18 @@ It is designed for **modpack creators** and **technical players** who want a cle
 
 ## ⚙️ Configuration
 
-**Configurable options in `Config.java`:**
+**Configurable options in `JEMConfig.java`:**
 
-| Option | Description | Default |
-|--------|-------------|---------|
-| `recipeIdFilter` | Text to match recipe IDs for displaying the marker | `kubejs` |
-| `outputFilter` | List of item IDs for recipes **without recipe IDs** to display markers | `[]` |
-| `tooltipLine1` | First line of the tooltip | `Modified recipe` |
+| Option | Description | Default                            |
+|--------|-------------|------------------------------------|
+| `recipeIdFilter` | Text to match recipe IDs for displaying the marker | `kubejs`                           |
+| `outputFilter` | List of item IDs for recipes **without recipe IDs** to display markers | `[]`                               |
+| `tooltipLine1` | First line of the tooltip | `Modified recipe`                  |
 | `tooltipLine2` | Second line of the tooltip | `According to the modpack creator` |
-| `onlySpecificRecipeID` | Debug flag to show markers on **all recipes** | `true` |
-| `defaultOffsetX` | Default X offset of marker | `19` |
-| `defaultOffsetY` | Default Y offset of marker | `-25` |
-| `categories` | List of recipe categories with custom marker positions (`categoryId;offsetX;offsetY`) | Predefined examples included |
+| `onlySpecificRecipeID` | Debug flag to show markers on **all recipes** | `false`                            |
+| `defaultOffsetX` | Default X offset of marker | `19`                               |
+| `defaultOffsetY` | Default Y offset of marker | `-25`                              |
+| `categories` | List of recipe categories with custom marker positions (`categoryId;offsetX;offsetY`) | Predefined examples included       |
 
 ---
 
@@ -85,7 +85,7 @@ It is designed for **modpack creators** and **technical players** who want a cle
 
 ## 🛠 Support
 
-- Report issues on [GitHub Issues](#).
+- Report issues on [https://github.com/Diamenty67/Just-Enough-Markers/issues](#).
 
 ---
 

@@ -4,9 +4,9 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.List;
 
-public class Config {
+public class JEMConfig {
     public static final ModConfigSpec COMMON_SPEC;
-    public static final Config COMMON;
+    public static final JEMConfig COMMON;
 
     // --- General settings ---
     public final ModConfigSpec.ConfigValue<String> recipeIdFilter;
@@ -25,11 +25,11 @@ public class Config {
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
-        COMMON = new Config(builder);
+        COMMON = new JEMConfig(builder);
         COMMON_SPEC = builder.build();
     }
 
-    private Config(ModConfigSpec.Builder builder) {
+    private JEMConfig(ModConfigSpec.Builder builder) {
         // --- General settings ---
         builder.comment("General settings for Just Enough Markers")
                 .push("general");

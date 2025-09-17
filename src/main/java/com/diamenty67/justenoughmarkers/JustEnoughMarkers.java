@@ -4,10 +4,10 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.ModLoadingContext;
 
-@Mod(ModConstants.MOD_ID)
+@Mod(JEMConstants.MOD_ID)
 public class JustEnoughMarkers {
     public JustEnoughMarkers() {
-        // Enregistrement de la config
-        ModLoadingContext.get().getActiveContainer().registerConfig(ModConfig.Type.COMMON, Config.COMMON_SPEC);
+        // Saving the config
+        ModLoadingContext.get().getActiveContainer().registerConfig(ModConfig.Type.COMMON, JEMConfig.COMMON_SPEC);
     }
 }

@@ -1,7 +1,7 @@
 package com.diamenty67.justenoughmarkers.client.jei;
 
-import com.diamenty67.justenoughmarkers.Config;
-import com.diamenty67.justenoughmarkers.ModConstants;
+import com.diamenty67.justenoughmarkers.JEMConfig;
+import com.diamenty67.justenoughmarkers.JEMConstants;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
@@ -29,8 +29,8 @@ import java.util.Optional;
 @MethodsReturnNonnullByDefault
 public class JEIMarkerPlugin implements IModPlugin {
 
-    private static final ResourceLocation ID = ModConstants.rl("jei_plugin");
-    private static final ResourceLocation MARKER_ICON = ModConstants.rl("textures/marker.png");
+    private static final ResourceLocation ID = JEMConstants.rl("jei_plugin");
+    private static final ResourceLocation MARKER_ICON = JEMConstants.rl("textures/marker.png");
     private static final int SIZE = 12;
 
     @Override
@@ -52,24 +52,24 @@ public class JEIMarkerPlugin implements IModPlugin {
                          IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics,
                          double mouseX, double mouseY) {
 
-            // --- Récupération de l’ID de la recette ---
+            // --- Fetching the recipe ID ---
             ResourceLocation id = resolveRecipeId(recipeCategory, recipe);
 
-            // --- Configuration utilisateur ---
-            boolean debugMode = Config.COMMON.onlySpecificRecipeID.get(); // debug/dev mode
-            String recipeFilter = Config.COMMON.recipeIdFilter.get();
-            List<? extends String> outputFilter = Config.COMMON.outputFilter.get();
+            // --- User configuration ---
+            boolean debugMode = JEMConfig.COMMON.onlySpecificRecipeID.get(); // debug/dev mode
+            String recipeFilter = JEMConfig.COMMON.recipeIdFilter.get();
+            List<? extends String> outputFilter = JEMConfig.COMMON.outputFilter.get();
 
             boolean showMarker = false;
 
             if (debugMode) {
-                // Affiche toujours le marker pour le debug
+                // Always display the marker for debugging
                 showMarker = true;
             } else if (id != null) {
-                // Recipes avec ID → seulement recipeIdFilter
+                // Recipes with ID → only recipeIdFilter
                 showMarker = id.toString().contains(recipeFilter);
             } else {
-                // Recipes sans ID → uniquement outputFilter
+                // Recipes without ID → only outputFilter
                 if (!outputFilter.isEmpty()) {
                     var outputs = recipeSlotsView.getSlotViews()
                             .stream()
@@ -89,12 +89,12 @@ public class JEIMarkerPlugin implements IModPlugin {
 
             if (!showMarker) return;
 
-            // --- Position du marker ---
-            int pX = recipeCategory.getWidth() - SIZE + Config.COMMON.defaultOffsetX.get();
-            int pY = recipeCategory.getHeight() - SIZE + Config.COMMON.defaultOffsetY.get();
+            // --- Marker position ---
+            int pX = recipeCategory.getWidth() - SIZE + JEMConfig.COMMON.defaultOffsetX.get();
+            int pY = recipeCategory.getHeight() - SIZE + JEMConfig.COMMON.defaultOffsetY.get();
 
-            // Vérifie si une catégorie a été configurée
-            List<? extends String> configuredCategories = Config.COMMON.categories.get();
+            // Checks if a category has been configured
+            List<? extends String> configuredCategories = JEMConfig.COMMON.categories.get();
             for (String entry : configuredCategories) {
                 String[] parts = entry.split(";");
                 if (parts.length == 3 && parts[0].equals(recipeCategory.getRecipeType().getUid().toString())) {
@@ -107,18 +107,18 @@ public class JEIMarkerPlugin implements IModPlugin {
                 }
             }
 
-            // --- Dessin du marker ---
+            // --- Drawing the marker ---
             guiGraphics.blit(MARKER_ICON, pX, pY, 0, 0, SIZE, SIZE, SIZE, SIZE);
 
-            // --- Tooltip si souris dessus ---
+            // --- Tooltip when hovering ---
             if (mouseX >= pX && mouseX <= (pX + SIZE) &&
                     mouseY >= pY && mouseY <= (pY + SIZE)) {
 
                 var font = Minecraft.getInstance().font;
                 var tooltip = List.of(
-                        Component.literal(Config.COMMON.tooltipLine1.get()),
-                        Component.literal(Config.COMMON.tooltipLine2.get()),
-                        Component.literal(ModConstants.MOD_NAME)
+                        Component.literal(JEMConfig.COMMON.tooltipLine1.get()),
+                        Component.literal(JEMConfig.COMMON.tooltipLine2.get()),
+                        Component.literal(JEMConstants.MOD_NAME)
                                 .withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC)
                 );
 
