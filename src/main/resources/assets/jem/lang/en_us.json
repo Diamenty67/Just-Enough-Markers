@@ -1,0 +1,13 @@
+{
+  "itemGroup.jem": "Example Mod Tab",
+  "block.jem.example_block": "Example Block",
+  "item.jem.example_item": "Example Item",
+
+  "jem.configuration.title": "Just Enough Markers (JEM) Configs",
+  "jem.configuration.section.jem.common.toml": "Just Enough Markers (JEM) Configs",
+  "jem.configuration.section.jem.common.toml.title": "Just Enough Markers (JEM) Configs",
+  "jem.configuration.items": "Item List",
+  "jem.configuration.logDirtBlock": "Log Dirt Block",
+  "jem.configuration.magicNumberIntroduction": "Magic Number Text",
+  "jem.configuration.magicNumber": "Magic Number"
+}
