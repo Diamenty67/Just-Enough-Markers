@@ -8,18 +8,13 @@ public class JEMConfig {
     public static final ModConfigSpec COMMON_SPEC;
     public static final JEMConfig COMMON;
 
-    // --- General settings ---
     public final ModConfigSpec.ConfigValue<String> recipeIdFilter;
     public final ModConfigSpec.ConfigValue<List<? extends String>> outputFilter;
     public final ModConfigSpec.ConfigValue<String> tooltipLine1;
     public final ModConfigSpec.ConfigValue<String> tooltipLine2;
-
-    // --- Debug settings ---
     public final ModConfigSpec.BooleanValue onlySpecificRecipeID;
     public final ModConfigSpec.IntValue defaultOffsetX;
     public final ModConfigSpec.IntValue defaultOffsetY;
-
-    // --- Custom marker categories ---
     public final ModConfigSpec.ConfigValue<List<? extends String>> categories;
 
 

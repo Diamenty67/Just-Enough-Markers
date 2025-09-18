@@ -52,7 +52,6 @@ public class JEIMarkerPlugin implements IModPlugin {
                          IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics,
                          double mouseX, double mouseY) {
 
-            // --- Fetching the recipe ID ---
             ResourceLocation id = resolveRecipeId(recipeCategory, recipe);
 
             // --- User configuration ---
@@ -63,7 +62,7 @@ public class JEIMarkerPlugin implements IModPlugin {
             boolean showMarker = false;
 
             if (debugMode) {
-                // Always display the marker for debugging
+                // Displays the marker on all JEI recipes
                 showMarker = true;
             } else if (id != null) {
                 // Recipes with ID → only recipeIdFilter
