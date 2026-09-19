@@ -7,6 +7,6 @@ public class JEMConstants {
     public static final String MOD_NAME = "Just Enough Markers";
 
     public static ResourceLocation rl(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+        return new ResourceLocation(MOD_ID, path);
     }
 }

@@ -1,11 +1,11 @@
 # Just Enough Markers
 
-![Minecraft Version](https://img.shields.io/badge/Minecraft-1.21.1-brightgreen)
-![Loader](https://img.shields.io/badge/Loader-NeoForge-orange)
+![Minecraft Version](https://img.shields.io/badge/Minecraft-1.20.1-brightgreen)
+![Loader](https://img.shields.io/badge/Loader-Forge-orange)
 ![Requires](https://img.shields.io/badge/Requires-JEI%20%7C%20KubeJS-blue)
 ![License](https://img.shields.io/badge/License-All%20Rights%20Reserved-red)
 
-**Just Enough Markers (JEM)** is a lightweight Minecraft mod for **NeoForge** that enhances **JEI (Just Enough Items)** by visually highlighting **modified recipes**.  
+**Just Enough Markers (JEM)** is a lightweight Minecraft mod for **Forge** that enhances **JEI (Just Enough Items)** by visually highlighting **modified recipes**.  
 It is designed for **modpack creators** and **technical players** who want a clear view of recipe changes, whether by **KubeJS** scripts or custom modifications.
 
 ---
@@ -31,7 +31,7 @@ It is designed for **modpack creators** and **technical players** who want a cle
 - Supports **dynamic marker positions** per recipe category.
 - Tooltip displays **custom messages** when hovering over a marker.
 - **Debug mode** to show markers on all recipes for testing.
-- Lightweight, stable, and compatible with **NeoForge 1.21.1**.
+- Lightweight, stable, and compatible with **Forge 1.20.1**.
 
 ---
 
@@ -67,10 +67,10 @@ It is designed for **modpack creators** and **technical players** who want a cle
 
 ## 📦 Installation
 
-1. Install **Minecraft 1.21.1** with **NeoForge**.
+1. Install **Minecraft 1.20.1** with **Forge**.
 2. Add **JEI** and **KubeJS** to your `mods` folder.
 3. Download the latest **JEM** `.jar`.
-4. Launch Minecraft using **NeoForge**.
+4. Launch Minecraft using **Forge**.
 
 ---
 
@@ -98,7 +98,7 @@ No part of this mod may be copied, redistributed, or modified without explicit p
 
 ## 📌 Notes
 
-- **NeoForge only** – Forge or Fabric are **not supported**.
+- **Forge 1.20.1 only** – NeoForge or Fabric are **not supported** (a NeoForge 1.21.1 version exists separately).
 - Works best with the **latest JEI and KubeJS versions**.
 - Intended primarily for **modpack developers** and **technical players**.
 - Provides **visual clarity** on modified recipes without affecting JEI functionality.
