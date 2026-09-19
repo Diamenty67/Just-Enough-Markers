@@ -1,30 +1,30 @@
 package com.diamenty67.justenoughmarkers;
 
-import net.neoforged.neoforge.common.ModConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.List;
 
 public class JEMConfig {
-    public static final ModConfigSpec COMMON_SPEC;
+    public static final ForgeConfigSpec COMMON_SPEC;
     public static final JEMConfig COMMON;
 
-    public final ModConfigSpec.ConfigValue<String> recipeIdFilter;
-    public final ModConfigSpec.ConfigValue<List<? extends String>> outputFilter;
-    public final ModConfigSpec.ConfigValue<String> tooltipLine1;
-    public final ModConfigSpec.ConfigValue<String> tooltipLine2;
-    public final ModConfigSpec.BooleanValue onlySpecificRecipeID;
-    public final ModConfigSpec.IntValue defaultOffsetX;
-    public final ModConfigSpec.IntValue defaultOffsetY;
-    public final ModConfigSpec.ConfigValue<List<? extends String>> categories;
+    public final ForgeConfigSpec.ConfigValue<String> recipeIdFilter;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> outputFilter;
+    public final ForgeConfigSpec.ConfigValue<String> tooltipLine1;
+    public final ForgeConfigSpec.ConfigValue<String> tooltipLine2;
+    public final ForgeConfigSpec.BooleanValue onlySpecificRecipeID;
+    public final ForgeConfigSpec.IntValue defaultOffsetX;
+    public final ForgeConfigSpec.IntValue defaultOffsetY;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> categories;
 
 
     static {
-        ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
+        ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
         COMMON = new JEMConfig(builder);
         COMMON_SPEC = builder.build();
     }
 
-    private JEMConfig(ModConfigSpec.Builder builder) {
+    private JEMConfig(ForgeConfigSpec.Builder builder) {
         // --- General settings ---
         builder.comment("General settings for Just Enough Markers")
                 .push("general");
