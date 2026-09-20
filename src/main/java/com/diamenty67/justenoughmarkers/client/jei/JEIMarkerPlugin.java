@@ -56,7 +56,7 @@ public class JEIMarkerPlugin implements IModPlugin {
 
             // --- User configuration ---
             boolean debugMode = JEMConfig.COMMON.onlySpecificRecipeID.get(); // debug/dev mode
-            String recipeFilter = JEMConfig.COMMON.recipeIdFilter.get();
+            List<String> recipeFilters = JEMConfig.COMMON.getRecipeIdFilters();
             List<? extends String> outputFilter = JEMConfig.COMMON.outputFilter.get();
 
             boolean showMarker = false;
@@ -66,7 +66,8 @@ public class JEIMarkerPlugin implements IModPlugin {
                 showMarker = true;
             } else if (id != null) {
                 // Recipes with ID → only recipeIdFilter
-                showMarker = id.toString().contains(recipeFilter);
+                String idString = id.toString();
+                showMarker = recipeFilters.stream().anyMatch(idString::contains);
             } else {
                 // Recipes without ID → only outputFilter
                 if (!outputFilter.isEmpty()) {

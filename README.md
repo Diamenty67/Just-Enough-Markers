@@ -38,7 +38,7 @@ It is designed for **modpack creators** and **technical players** who want a cle
 ## ⚙️ How It Works
 
 1. Recipes are checked for a **recipe ID**:
-    - If the recipe ID contains the `recipeIdFilter` text, a **marker** is displayed.
+    - If the recipe ID contains any of the `recipeIdFilter` texts, a **marker** is displayed.
 2. Recipes **without a recipe ID** are checked against `outputFilter`:
     - If the output matches an item in the list, a **marker** is displayed.
     - Recipes with a recipe ID are **ignored** for outputFilter.
@@ -54,7 +54,7 @@ It is designed for **modpack creators** and **technical players** who want a cle
 
 | Option | Description | Default                            |
 |--------|-------------|------------------------------------|
-| `recipeIdFilter` | Text to match recipe IDs for displaying the marker | `kubejs`                           |
+| `recipeIdFilter` | List of texts to match recipe IDs for displaying the marker (e.g. `["kubejs", "example"]`) | `["kubejs"]`                       |
 | `outputFilter` | List of item IDs for recipes **without recipe IDs** to display markers | `[]`                               |
 | `tooltipLine1` | First line of the tooltip | `Modified recipe`                  |
 | `tooltipLine2` | Second line of the tooltip | `According to the modpack creator` |
