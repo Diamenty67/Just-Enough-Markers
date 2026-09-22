@@ -1,104 +1,94 @@
-# Just Enough Markers
+# Just Enough Markers (JEM)
 
-![Minecraft Version](https://img.shields.io/badge/Minecraft-1.20.1-brightgreen)
-![Loader](https://img.shields.io/badge/Loader-Forge-orange)
-![Requires](https://img.shields.io/badge/Requires-JEI%20%7C%20KubeJS-blue)
-![License](https://img.shields.io/badge/License-All%20Rights%20Reserved-red)
+**Visual markers for modified recipes in Just Enough Items (JEI) and EMI.**
 
-**Just Enough Markers (JEM)** is a lightweight Minecraft mod for **Forge** that enhances **JEI (Just Enough Items)** by visually highlighting **modified recipes**.  
-It is designed for **modpack creators** and **technical players** who want a clear view of recipe changes, whether by **KubeJS** scripts or custom modifications.
+Just Enough Markers (JEM) is a lightweight, client-side Minecraft mod designed for **modpack developers, creators, and technical players**. It adds configurable visual markers to recipes displayed in **Just Enough Items (JEI)** and **EMI**, making customized recipes easier to identify.
 
----
+JEM is particularly useful for modpacks that use **KubeJS** or other tools to modify recipes.
 
-## 📋 Table of Contents
+***
 
-- [Features](#-features)
-- [How It Works](#-how-it-works)
-- [Configuration](#-configuration)
-- [Installation](#-installation)
-- [Usage](#-usage)
-- [Support](#-support)
-- [License](#-license)
-- [Notes](#-notes)
+## ✨ Features
 
----
+*   **Recipe ID filtering** — Mark recipes whose IDs match the configured `recipeIdFilter`.
+*   **Output filtering** — Identify recipes by their outputs using the `outputFilter` configuration.
+*   **Customizable markers** — Configure marker positions, offsets, and tooltip messages.
+*   **Category-specific positioning** — Define custom marker positions for individual recipe categories.
+*   **Debug mode** — Display markers on all recipes for testing and development.
+*   **Client-side and lightweight** — JEM only modifies the recipe viewer's visual presentation and does not alter recipes.
 
-## 🌟 Features
+***
 
-- Highlights recipes in **JEI** based on:
-    - **Recipe IDs** matching a specific filter (`recipeIdFilter`).
-    - **Outputs of recipes without an ID** (`outputFilter`).
-- Supports **dynamic marker positions** per recipe category.
-- Tooltip displays **custom messages** when hovering over a marker.
-- **Debug mode** to show markers on all recipes for testing.
-- Lightweight, stable, and compatible with **Forge 1.20.1**.
+## 🔌 Compatibility
 
----
+### Minecraft Versions
+
+| Minecraft |Mod Loader |Support     |
+| --------- |---------- |----------- |
+| <strong>1.21.1</strong> |<strong>NeoForge</strong> |✅ Supported |
+| <strong>1.20.1</strong> |<strong>Forge</strong> |✅ Supported |
+
+### Recipe Viewer Compatibility
+
+JEM is built specifically for **Just Enough Items (JEI)** and is compatible with the **majority of JEI plugins and integrations**. JEI is required for JEM to load.
+
+JEM also supports **EMI**: when EMI is installed alongside JEI, markers are shown in EMI's recipe screen too, using the exact same configuration.
+
+> ⚠️ **If EMI is installed, run `/reload` after changing JEM's configuration.** EMI only rebuilds its recipe list — and re-applies JEM's markers — on `/reload`, on world join, or on a resource pack reload. Configuration changes made mid-session won't appear in EMI's recipe screen until then. JEI does not have this limitation: its markers update live as soon as the configuration file is saved.
+>
+> JEM tries to enable EMI's **"Show Recipe Decorators"** setting (`dev.show-recipe-decorators`) automatically on startup. <span style="color:#e03e2d">**This setting must be set to `true` in EMI's own configuration, or the marker will not appear in EMI at all.**</span> If markers still don't show after a full restart, check that value manually in EMI's config.
+
+> ⚠️ **<span style="color:#e03e2d">JEM is not compatible with Roughly Enough Items (REI).</span>**
+
+***
 
 ## ⚙️ How It Works
 
-1. Recipes are checked for a **recipe ID**:
-    - If the recipe ID contains the `recipeIdFilter` text, a **marker** is displayed.
-2. Recipes **without a recipe ID** are checked against `outputFilter`:
-    - If the output matches an item in the list, a **marker** is displayed.
-    - Recipes with a recipe ID are **ignored** for outputFilter.
-3. **Marker position** can be adjusted per recipe category via `categories`.
-4. **Tooltips** appear when hovering over a marker, showing configurable lines.
-5. **Debug mode** (`onlySpecificRecipeID`) can force markers on all recipes regardless of filters.
+JEM checks recipes displayed by JEI or EMI against your configured filters.
 
----
+1.  The recipe ID is checked against `recipeIdFilter`.
+2.  If no matching ID is found, the recipe output can be checked against `outputFilter`.
+3.  Matching recipes receive a visual marker.
+4.  Marker appearance and position are controlled through the configuration.
+5.  Debug mode can be used to display markers regardless of the configured filters.
 
 ## ⚙️ Configuration
 
-**Configurable options in `JEMConfig.java`:**
+| Option               |Description                                                 |Default                          |
+| -------------------- |----------------------------------------------------------- |-------------------------------- |
+| <code>recipeIdFilter</code> |List of texts to match recipe IDs for displaying the marker |<code>["kubejs"]</code>          |
+| <code>outputFilter</code> |Item IDs used for output-based filtering                    |<code>[]</code>                  |
+| <code>tooltipLine1</code> |First line of the marker tooltip                            |<code>Modified recipe</code>     |
+| <code>tooltipLine2</code> |Second line of the marker tooltip                           |<code>According to the modpack creator</code> |
+| <code>onlySpecificRecipeID</code> |Debug option for displaying markers on all recipes          |<code>false</code>               |
+| <code>defaultOffsetX</code> |Default horizontal marker offset                            |<code>19</code>                  |
+| <code>defaultOffsetY</code> |Default vertical marker offset                              |<code>-25</code>                 |
+| <code>categories</code> |Custom positions for individual recipe categories           |Predefined examples              |
 
-| Option | Description | Default                            |
-|--------|-------------|------------------------------------|
-| `recipeIdFilter` | Text to match recipe IDs for displaying the marker | `kubejs`                           |
-| `outputFilter` | List of item IDs for recipes **without recipe IDs** to display markers | `[]`                               |
-| `tooltipLine1` | First line of the tooltip | `Modified recipe`                  |
-| `tooltipLine2` | Second line of the tooltip | `According to the modpack creator` |
-| `onlySpecificRecipeID` | Debug flag to show markers on **all recipes** | `false`                            |
-| `defaultOffsetX` | Default X offset of marker | `19`                               |
-| `defaultOffsetY` | Default Y offset of marker | `-25`                              |
-| `categories` | List of recipe categories with custom marker positions (`categoryId;offsetX;offsetY`) | Predefined examples included       |
+***
 
----
+## 🛠️ Support & Issues
 
-## 📦 Installation
+For bug reports, compatibility issues, or feature requests, please use the GitHub issue tracker:
 
-1. Install **Minecraft 1.20.1** with **Forge**.
-2. Add **JEI** and **KubeJS** to your `mods` folder.
-3. Download the latest **JEM** `.jar`.
-4. Launch Minecraft using **Forge**.
+**[GitHub Issues](https://github.com/Diamenty67/Just-Enough-Markers/issues)**
 
----
+When reporting an issue, please provide:
 
-## 🎮 Usage
+*   Minecraft version
+*   Mod loader and version
+*   JEM version
+*   JEI version (and EMI version, if installed)
+*   Relevant mods
+*   Description of the issue
+*   Logs or screenshots, if applicable
 
-- Open **JEI** in-game.
-- Recipes matching **recipeIdFilter** or outputs in **outputFilter** (for recipes without IDs) will show markers.
-- Hover over a marker to see tooltip information.
-- Use debug mode to **force all markers** for testing or modpack development.
+## 📜 License
 
----
+**All Rights Reserved**
 
-## 🛠 Support
+This project may not be redistributed, copied, modified, or republished without explicit permission from the author.
 
-- Report issues on [https://github.com/Diamenty67/Just-Enough-Markers/issues](#).
+***
 
----
-
-## 📄 License
-
-**All Rights Reserved.**  
-No part of this mod may be copied, redistributed, or modified without explicit permission from the author.
-
----
-
-## 📌 Notes
-
-- **Forge 1.20.1 only** – NeoForge or Fabric are **not supported** (a NeoForge 1.21.1 version exists separately).
-- Works best with the **latest JEI and KubeJS versions**.
-- Intended primarily for **modpack developers** and **technical players**.
-- Provides **visual clarity** on modified recipes without affecting JEI functionality.
+**Just Enough Markers** — _Make your recipe changes visible._

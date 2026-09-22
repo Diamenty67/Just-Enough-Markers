@@ -33,3 +33,10 @@ issueTrackerURL="${mod_issue_tracker_url}"
     versionRange="${jei_version_range}"
     ordering="NONE"
     side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="emi"
+    mandatory=false
+    versionRange="[0,)"
+    ordering="NONE"
+    side="BOTH"
