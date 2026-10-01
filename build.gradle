@@ -22,6 +22,10 @@ repositories {
         name = "ModMaven"
         url = "https://modmaven.dev"
     }
+    maven {
+        name = "TerraformersMC"
+        url = "https://maven.terraformersmc.com/releases/"
+    }
 }
 
 base {
@@ -85,6 +89,13 @@ dependencies {
     compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"))
     compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}"))
     runtimeOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}"))
+
+    // EMI is an optional, soft dependency: the game and JEM must both work fine without it.
+    // Its plugin discovery (@EmiEntrypoint) is driven by EMI itself and never touched if EMI is absent.
+    // compileOnly only (no runtimeOnly): EMI's own mixins currently fail to apply in this
+    // ForgeGradle 1.20.1 dev sandbox (SRG name resolution issue specific to "userdev", not
+    // reproduced in a real launched game), which would otherwise break `runClient` entirely.
+    compileOnly(fg.deobf("dev.emi:emi-forge:${emi_version}"))
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {

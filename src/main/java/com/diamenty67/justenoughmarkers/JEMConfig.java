@@ -8,7 +8,7 @@ public class JEMConfig {
     public static final ForgeConfigSpec COMMON_SPEC;
     public static final JEMConfig COMMON;
 
-    public final ForgeConfigSpec.ConfigValue<String> recipeIdFilter;
+    public final ForgeConfigSpec.ConfigValue<Object> recipeIdFilter;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> outputFilter;
     public final ForgeConfigSpec.ConfigValue<String> tooltipLine1;
     public final ForgeConfigSpec.ConfigValue<String> tooltipLine2;
@@ -29,10 +29,12 @@ public class JEMConfig {
         builder.comment("General settings for Just Enough Markers")
                 .push("general");
             recipeIdFilter = builder
-                    .comment("Text used to filter recipes with an Recipe ID.",
-                            "Recipes with an Recipe ID containing this text will display the marker",
-                            " Default: kubejs")
-                    .define("recipeIdFilter", "kubejs");
+                    .comment("List of texts used to filter recipes with a Recipe ID.",
+                            "Recipes with a Recipe ID containing any of these texts will display the marker",
+                            " Format: [\"namespace\"] or [\"namespace1\", \"namespace2\"]",
+                            " A single text (recipeIdFilter = \"kubejs\") from older versions is still accepted",
+                            " Default: [\"kubejs\"]")
+                    .define("recipeIdFilter", (Object) List.of("kubejs"), JEMConfig::isValidRecipeIdFilter);
             outputFilter = builder
                     .comment("List of item IDs for recipes WITHOUT an ID that should display the marker",
                             " Format: [\"modId:item\"]",
@@ -82,5 +84,25 @@ public class JEMConfig {
                             obj -> obj instanceof String
                     );
         builder.pop();
+    }
+
+    /**
+     * The texts a recipe ID has to contain to display the marker. The config normally holds a list,
+     * but a single text (the format of older versions) is still supported.
+     */
+    public List<String> getRecipeIdFilters() {
+        Object value = recipeIdFilter.get();
+        if (value instanceof String text) {
+            return List.of(text);
+        }
+        if (value instanceof List<?> texts) {
+            return texts.stream().map(String.class::cast).toList();
+        }
+        return List.of();
+    }
+
+    private static boolean isValidRecipeIdFilter(Object value) {
+        return value instanceof String
+                || (value instanceof List<?> list && list.stream().allMatch(String.class::isInstance));
     }
 }
