@@ -5,6 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 public class JEMConstants {
     public static final String MOD_ID = "jem";
     public static final String MOD_NAME = "Just Enough Markers";
+    public static final String MOD_SHORT_NAME = "JEM";
 
     public static ResourceLocation rl(String path) {
         return new ResourceLocation(MOD_ID, path);

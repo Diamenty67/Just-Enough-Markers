@@ -2,6 +2,7 @@ package com.diamenty67.justenoughmarkers;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class JEMConfig {
@@ -12,6 +13,7 @@ public class JEMConfig {
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> outputFilter;
     public final ForgeConfigSpec.ConfigValue<String> tooltipLine1;
     public final ForgeConfigSpec.ConfigValue<String> tooltipLine2;
+    public final ForgeConfigSpec.BooleanValue hideTooltipDetails;
     public final ForgeConfigSpec.BooleanValue onlySpecificRecipeID;
     public final ForgeConfigSpec.IntValue defaultOffsetX;
     public final ForgeConfigSpec.IntValue defaultOffsetY;
@@ -33,8 +35,8 @@ public class JEMConfig {
                             "Recipes with a Recipe ID containing any of these texts will display the marker",
                             " Format: [\"namespace\"] or [\"namespace1\", \"namespace2\"]",
                             " A single text (recipeIdFilter = \"kubejs\") from older versions is still accepted",
-                            " Default: [\"kubejs\"]")
-                    .define("recipeIdFilter", (Object) List.of("kubejs"), JEMConfig::isValidRecipeIdFilter);
+                            " Default: [\"kubejs\", \"kjs\"]")
+                    .define("recipeIdFilter", (Object) List.of("kubejs", "kjs"), JEMConfig::isValidRecipeIdFilter);
             outputFilter = builder
                     .comment("List of item IDs for recipes WITHOUT an ID that should display the marker",
                             " Format: [\"modId:item\"]",
@@ -52,6 +54,11 @@ public class JEMConfig {
                     .comment("Second line of the tooltip when hovering over the marker",
                             " Default: According to the modpack creator")
                     .define("tooltipLine2", "According to the modpack creator");
+            hideTooltipDetails = builder
+                    .comment("If true, the tooltip only shows \"JEM\" instead of tooltipLine1, tooltipLine2",
+                            "and the \"Just Enough Markers\" credit line.",
+                            " Default: false")
+                    .define("hideTooltipDetails", false);
         builder.pop();
 
         // --- Debug settings ---
@@ -65,10 +72,10 @@ public class JEMConfig {
                     .define("onlySpecificRecipeID", false);
             defaultOffsetX = builder
                     .comment("Default X offset for the marker if no category override exists")
-                    .defineInRange("defaultOffsetX", 19, -1000, 1000);
+                    .defineInRange("defaultOffsetX", 0, -1000, 1000);
             defaultOffsetY = builder
                     .comment("Default Y offset for the marker if no category override exists")
-                    .defineInRange("defaultOffsetY", -25, -1000, 1000);
+                    .defineInRange("defaultOffsetY", 0, -1000, 1000);
         builder.pop();
 
         // --- Custom marker categories ---
@@ -77,10 +84,11 @@ public class JEMConfig {
             categories = builder
                     .comment("Adjust marker position for specific recipe categories",
                             " Format: \"categoryId;offsetX;offsetY\"",
-                            " Example: \"minecraft;crafting;-14;-14\", \"ae2:charger;3;3\"")
+                            " Example: [\"minecraft:crafting;-45;-14\", \"emi:anvil_repairing;4;10\"]",
+                            " Automatically updated by in-game marker move mode (see the key binds)")
                     .defineListAllowEmpty(
                             "categories",
-                            () -> List.of("minecraft:compostable;0;0","minecraft:fuel;0;0","apothic_enchanting:enchanting;5;5","apothic_spawners:spawner_modifiers;0;0","easy_villagers:breeding;0;-19","easy_villagers:converting;0;-19","easy_villagers:incubating;0;-19","jei:information;0;-110","jei_mekanism_multiblocks:multiblock.mekanism.boiler;-135;-110","jei_mekanism_multiblocks:multiblock.mekanism.dynamic_tank;-135;-110","jei_mekanism_multiblocks:multiblock.mekanism.evaporation_plant;-135;-110","jei_mekanism_multiblocks:multiblock.mekanism.matrix;-135;-110","jei_mekanism_multiblocks:multiblock.mekanism.sps;-135;-110","jei_mekanism_multiblocks:multiblock.mekanismgenerators.fission_reactor;-135;-110","jei_mekanism_multiblocks:multiblock.mekanismgenerators.fusion_reactor;-135;-110","jei_mekanism_multiblocks:multiblock.mekanismgenerators.turbine;-135;-110","mysticalagriculture:enchanter;20;0","mysticalagriculture:reprocessor;20;0","mysticalagriculture:soul_extractor;20;0","mysticalagriculture:soulium_spawner;20;0","tombstone:combine;20;0","reliquary:infernal_tear;20;0","mob_grinding_utils:solidify;20;0","jeed:effect_info;0;-110","justenoughbreeding:breeding;0;0","powah:coolant;0;0","powah:heat_source;0;0","powah:magmatic;0;0","powah:reactor_fuel;0;0","powah:solid_coolant;0;0","tiab:resource_generator;0;0","chipped:workbench;0;-95","cataclysm:weapon_infusion;20;0","betterarcheology:identifying;-5;-5","jeresources:dungeon;0;-110","jeresources:enchantment;0;-115","jeresources:mob;0;-115","jeresources:plant;0;-115","jeresources:villager;0;0","jeresources:worldgen;0;-75","aether:ambrosium_enchanting;20;0","aether:block_placement_ban;20;0","aether:item_placement_ban;20;0","knightlib:great_chalice_interaction;0;0"),
+                            () -> List.of(),
                             obj -> obj instanceof String
                     );
         builder.pop();
@@ -99,6 +107,24 @@ public class JEMConfig {
             return texts.stream().map(String.class::cast).toList();
         }
         return List.of();
+    }
+
+    /**
+     * Replaces (or adds) the saved offset for a recipe category, or removes its entry entirely
+     * when the new offset matches the default, keeping {@code categories} clean. Used by the
+     * in-game marker move mode to save a drag, and to reset a single marker back to default.
+     */
+    public void setCategoryOffset(String categoryId, int offsetX, int offsetY) {
+        List<String> updated = new ArrayList<>();
+        for (String entry : categories.get()) {
+            String[] parts = entry.split(";");
+            if (parts.length == 3 && parts[0].equals(categoryId)) continue; // drop the previous entry, if any
+            updated.add(entry);
+        }
+        if (offsetX != defaultOffsetX.get() || offsetY != defaultOffsetY.get()) {
+            updated.add(categoryId + ";" + offsetX + ";" + offsetY);
+        }
+        categories.set(updated);
     }
 
     private static boolean isValidRecipeIdFilter(Object value) {

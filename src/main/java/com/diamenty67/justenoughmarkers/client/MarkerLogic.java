@@ -26,8 +26,8 @@ public final class MarkerLogic {
      *                  (no recipe ID and outputFilter is not empty), same as before
      */
     public static boolean shouldShowMarker(@Nullable ResourceLocation recipeId, Supplier<List<ResourceLocation>> outputIds) {
-        if (JEMConfig.COMMON.onlySpecificRecipeID.get()) {
-            // Displays the marker on all recipes
+        if (MoveMode.effectiveOnlySpecificRecipeID()) {
+            // Displays the marker on all recipes (also forced on while move mode is active)
             return true;
         }
 
@@ -69,6 +69,12 @@ public final class MarkerLogic {
     }
 
     public static List<Component> buildTooltip() {
+        if (MoveMode.effectiveHideTooltipDetails()) {
+            return List.of(
+                    Component.literal(JEMConstants.MOD_SHORT_NAME)
+                            .withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC)
+            );
+        }
         return List.of(
                 Component.literal(JEMConfig.COMMON.tooltipLine1.get()),
                 Component.literal(JEMConfig.COMMON.tooltipLine2.get()),
