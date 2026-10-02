@@ -2,18 +2,26 @@ package com.diamenty67.justenoughmarkers.client.emi;
 
 import com.diamenty67.justenoughmarkers.JEMConstants;
 import com.diamenty67.justenoughmarkers.client.MarkerLogic;
+import com.diamenty67.justenoughmarkers.client.MoveMode;
 import com.mojang.logging.LogUtils;
 import dev.emi.emi.api.EmiEntrypoint;
 import dev.emi.emi.api.EmiPlugin;
 import dev.emi.emi.api.EmiRegistry;
 import dev.emi.emi.api.recipe.EmiRecipe;
 import dev.emi.emi.api.stack.EmiStack;
+import dev.emi.emi.api.widget.Bounds;
+import dev.emi.emi.api.widget.Widget;
 import dev.emi.emi.api.widget.WidgetHolder;
 import dev.emi.emi.config.EmiConfig;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Recipe;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
+
+import java.util.List;
 
 /**
  * EMI is a separate recipe viewer from JEI, with its own plugin API: JEI's
@@ -57,34 +65,19 @@ public class EMIMarkerPlugin implements EmiPlugin {
     }
 
     private static void decorate(EmiRecipe recipe, WidgetHolder widgets) {
-        ResourceLocation id = resolveRecipeId(recipe);
-
-        boolean showMarker = MarkerLogic.shouldShowMarker(id, () -> recipe.getOutputs()
-                .stream()
-                .map(EmiStack::getId)
-                .toList());
-
-        if (!showMarker) return;
-
-        // --- Marker position ---
+        // EMI builds a recipe display's widgets once (not every frame, like JEI's draw() does), and
+        // then reuses that same display across many frames without calling decorate() again. So a
+        // widget is always added here, for every recipe, and whether the marker should actually be
+        // visible right now is decided fresh every frame inside the widget's own render() instead.
+        // Deciding it here once, like an earlier version of this plugin did, meant a recipe that
+        // didn't qualify when its display was first built could never show a marker later just
+        // because move mode got turned on afterwards — and conversely, a marker added while move
+        // mode was on stayed on screen after turning move mode back off, until the display was
+        // rebuilt (e.g. by navigating to a different page).
         String categoryId = recipe.getCategory().getId().toString();
         int width = recipe.getDisplayWidth();
         int height = recipe.getDisplayHeight();
-        int[] pos = MarkerLogic.computeMarkerPosition(categoryId, width, height);
-
-        // --- Drawing the marker + tooltip when hovering ---
-        // EMI hit-tests the widget bounds itself, unlike JEI where the mouse position had to be
-        // checked manually against the marker's rectangle.
-        //
-        // The 6-int addTexture(...) overload isn't used here: it hardcodes the *assumed* source
-        // texture to 256x256 (meant for picking an icon out of a big shared sprite sheet), which
-        // would sample only a tiny corner of our actual, standalone 12x12 marker.png and render
-        // essentially nothing. Passing SIZE for width/height/regionWidth/regionHeight/textureWidth/
-        // textureHeight alike (all equal, so the ratio is 1:1) instead means "sample the whole
-        // source image", exactly matching JEI's guiGraphics.blit(..., SIZE, SIZE, SIZE, SIZE) call.
-        widgets.addTexture(MARKER_ICON, pos[0], pos[1], MarkerLogic.SIZE, MarkerLogic.SIZE, 0, 0,
-                        MarkerLogic.SIZE, MarkerLogic.SIZE, MarkerLogic.SIZE, MarkerLogic.SIZE)
-                .tooltipText(MarkerLogic.buildTooltip());
+        widgets.add(new MarkerWidget(recipe, categoryId, width, height));
     }
 
     /**
@@ -96,5 +89,73 @@ public class EMIMarkerPlugin implements EmiPlugin {
     private static ResourceLocation resolveRecipeId(EmiRecipe recipe) {
         Recipe<?> backing = recipe.getBackingRecipe();
         return backing != null ? backing.getId() : null;
+    }
+
+    private static class MarkerWidget extends Widget {
+        private final EmiRecipe recipe;
+        private final String categoryId;
+        private final int recipeWidth;
+        private final int recipeHeight;
+
+        // Updated every render() call, i.e. every frame: whether the marker currently has anything
+        // to show, and if so where, for getBounds()/getTooltip() to agree with what was just drawn.
+        private boolean visible;
+        private int currentX;
+        private int currentY;
+
+        MarkerWidget(EmiRecipe recipe, String categoryId, int recipeWidth, int recipeHeight) {
+            this.recipe = recipe;
+            this.categoryId = categoryId;
+            this.recipeWidth = recipeWidth;
+            this.recipeHeight = recipeHeight;
+        }
+
+        @Override
+        public Bounds getBounds() {
+            return visible ? new Bounds(currentX, currentY, MarkerLogic.SIZE, MarkerLogic.SIZE) : Bounds.EMPTY;
+        }
+
+        @Override
+        public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+            ResourceLocation id = resolveRecipeId(recipe);
+            visible = MarkerLogic.shouldShowMarker(id, () -> recipe.getOutputs()
+                    .stream()
+                    .map(EmiStack::getId)
+                    .toList());
+
+            if (!visible) return;
+
+            int[] pos = MarkerLogic.computeMarkerPosition(categoryId, recipeWidth, recipeHeight);
+            int x = pos[0];
+            int y = pos[1];
+
+            ResourceLocation texture = MARKER_ICON;
+            if (MoveMode.isActive()) {
+                // `this` identifies this specific on-screen marker widget; several recipes shown
+                // together often share the same categoryId, so that alone can't tell the dragged
+                // marker apart from the others. EMI constructs one MarkerWidget per recipe display,
+                // so `this` is a stable, unique identity for the whole drag gesture.
+                MoveMode.Result result = MoveMode.update(this, categoryId, x, y, mouseX, mouseY, recipeWidth, recipeHeight);
+                x = result.x();
+                y = result.y();
+                texture = MoveMode.textureFor(result.state());
+            }
+
+            currentX = x;
+            currentY = y;
+
+            // Whole-image blit: see JEIMarkerPlugin for why width/height/regionWidth/regionHeight/
+            // textureWidth/textureHeight all equal SIZE here instead of the real texture dimensions.
+            guiGraphics.blit(texture, x, y, 0, 0, MarkerLogic.SIZE, MarkerLogic.SIZE, MarkerLogic.SIZE, MarkerLogic.SIZE);
+        }
+
+        @Override
+        public List<ClientTooltipComponent> getTooltip(int mouseX, int mouseY) {
+            if (!visible) return List.of();
+            return MarkerLogic.buildTooltip().stream()
+                    .map(Component::getVisualOrderText)
+                    .map(ClientTooltipComponent::create)
+                    .toList();
+        }
     }
 }

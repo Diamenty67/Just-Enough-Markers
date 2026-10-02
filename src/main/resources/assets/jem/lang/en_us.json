@@ -3,6 +3,13 @@
   "block.jem.example_block": "Example Block",
   "item.jem.example_item": "Example Item",
 
+  "key.categories.jem": "Just Enough Markers (JEM)",
+  "key.jem.toggle_move_mode": "Toggle Marker Move Mode",
+
+  "jem.message.move_mode.enabled": "JEM: move mode enabled",
+  "jem.message.move_mode.hint": "Hold left-click on a marker and drag it to reposition it. Right-click a marker to reset it.",
+  "jem.message.move_mode.disabled": "JEM: move mode disabled",
+
   "jem.configuration.title": "Just Enough Markers (JEM) Configs",
   "jem.configuration.section.jem.common.toml": "Just Enough Markers (JEM) Configs",
   "jem.configuration.section.jem.common.toml.title": "Just Enough Markers (JEM) Configs",

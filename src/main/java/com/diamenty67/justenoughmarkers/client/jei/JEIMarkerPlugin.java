@@ -2,6 +2,7 @@ package com.diamenty67.justenoughmarkers.client.jei;
 
 import com.diamenty67.justenoughmarkers.JEMConstants;
 import com.diamenty67.justenoughmarkers.client.MarkerLogic;
+import com.diamenty67.justenoughmarkers.client.MoveMode;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
@@ -61,12 +62,26 @@ public class JEIMarkerPlugin implements IModPlugin {
 
             // --- Marker position ---
             String categoryId = recipeCategory.getRecipeType().getUid().toString();
-            int[] pos = MarkerLogic.computeMarkerPosition(categoryId, recipeCategory.getWidth(), recipeCategory.getHeight());
+            int width = recipeCategory.getWidth();
+            int height = recipeCategory.getHeight();
+            int[] pos = MarkerLogic.computeMarkerPosition(categoryId, width, height);
             int pX = pos[0];
             int pY = pos[1];
 
+            // --- Move mode: drag/reset this marker, and pick its state texture ---
+            ResourceLocation texture = MARKER_ICON;
+            if (MoveMode.isActive()) {
+                // `recipe` identifies this specific on-screen marker; several recipes shown together
+                // (e.g. a scrollable list) often share the same categoryId, so that alone can't tell
+                // the dragged marker apart from the others.
+                MoveMode.Result result = MoveMode.update(recipe, categoryId, pX, pY, (int) mouseX, (int) mouseY, width, height);
+                pX = result.x();
+                pY = result.y();
+                texture = MoveMode.textureFor(result.state());
+            }
+
             // --- Drawing the marker ---
-            guiGraphics.blit(MARKER_ICON, pX, pY, 0, 0, MarkerLogic.SIZE, MarkerLogic.SIZE, MarkerLogic.SIZE, MarkerLogic.SIZE);
+            guiGraphics.blit(texture, pX, pY, 0, 0, MarkerLogic.SIZE, MarkerLogic.SIZE, MarkerLogic.SIZE, MarkerLogic.SIZE);
 
             // --- Tooltip when hovering ---
             if (mouseX >= pX && mouseX <= (pX + MarkerLogic.SIZE) &&
