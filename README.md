@@ -34,7 +34,7 @@ JEM is particularly useful for modpacks that use **KubeJS** or other tools to mo
 
 JEM is built specifically for **Just Enough Items (JEI)** and is compatible with the **majority of JEI plugins and integrations**. JEI is required for JEM to load.
 
-JEM also supports **EMI**: when EMI is installed alongside JEI, markers are shown in EMI's recipe screen too, using the exact same configuration, and update live as the configuration file changes — no `/reload` needed, the same as JEI. This was not always the case (older versions of JEM needed a `/reload`, or at least changing page, for EMI to catch up); if markers still seem stuck after a configuration change on a recipe EMI is already displaying, treat it as a bug and report it.
+JEM also supports **EMI**: when EMI is installed alongside JEI, markers are shown in EMI's recipe screen too, using the exact same configuration, and update live as the configuration file changes — no `/reload` needed, the same as JEI. If markers still seem stuck after a configuration change on a recipe EMI is already displaying, treat it as a bug and report it.
 >
 > JEM tries to enable EMI's **"Show Recipe Decorators"** setting (`dev.show-recipe-decorators`) automatically on startup. <span style="color:#e03e2d">**This setting must be set to `true` in EMI's own configuration, or the marker will not appear in EMI at all.**</span> If markers still don't show after a full restart, check that value manually in EMI's config.
 
@@ -70,7 +70,7 @@ JEM checks recipes displayed by JEI or EMI against your configured filters.
 
 ## 🖱️ In-Game Marker Move Mode
 
-Instead of editing `categories` by hand, markers can be repositioned directly in JEI's or EMI's recipe screen (hand-editing is still supported, but each entry must be a quoted string, e.g. `categories = ["minecraft:crafting;0;0"]` — a missing pair of quotes is invalid TOML; JEM resets the file to its defaults rather than let that crash the game, but the mistake would still have to be fixed by hand in the backed-up copy it leaves behind):
+Instead of editing `categories` by hand, markers can be repositioned directly in JEI's or EMI's recipe screen (hand-editing is still supported, but each entry must be a quoted string, e.g. `categories = ["minecraft:crafting;0;0"]` — a missing pair of quotes is invalid TOML. The game does not crash: the broken file is backed up next to the configuration file and a fresh default one is created, so the mistake would still have to be fixed by hand in that backup):
 
 1.  Bind a key to **"Toggle Marker Move Mode"** in **Controls → Just Enough Markers (JEM)** (unbound by default). The key works even while JEI's or EMI's recipe screen is open — that is in fact when it matters.
 2.  Press it to enter move mode. A chat message confirms it, and briefly explains the controls.

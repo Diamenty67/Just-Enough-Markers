@@ -17,7 +17,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -82,13 +82,13 @@ public class EMIMarkerPlugin implements EmiPlugin {
 
     /**
      * Mirrors JEI's {@code IRecipeCategoryDecorator} semantics: a recipe "has an ID" only when it
-     * is genuinely backed by a registered {@link Recipe} (e.g. a KubeJS recipe), as opposed to a
+     * is genuinely backed by a registered {@link RecipeHolder} (e.g. a KubeJS recipe), as opposed to a
      * purely visual/info entry that EMI still has to give some internal ID to.
      */
     @Nullable
     private static ResourceLocation resolveRecipeId(EmiRecipe recipe) {
-        Recipe<?> backing = recipe.getBackingRecipe();
-        return backing != null ? backing.getId() : null;
+        RecipeHolder<?> backing = recipe.getBackingRecipe();
+        return backing != null ? backing.id() : null;
     }
 
     private static class MarkerWidget extends Widget {

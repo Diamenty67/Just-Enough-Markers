@@ -8,6 +8,6 @@ public class JEMConstants {
     public static final String MOD_SHORT_NAME = "JEM";
 
     public static ResourceLocation rl(String path) {
-        return new ResourceLocation(MOD_ID, path);
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
 }
